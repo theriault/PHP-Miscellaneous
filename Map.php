@@ -12,7 +12,7 @@
  * $map[$arr] = 4;
  * $im = imagecreate(10,10); // requires GD
  * $map[$im] = 5;
- * echo $map[null].$map[false].$map[1.5].$map[$arr].$map[$im]; // "1234"
+ * echo $map[null].$map[false].$map[1.5].$map[array(1, 2, 3)].$map[$im]; // "1234"
  */
 class Map implements ArrayAccess {
 	private $map = array();
