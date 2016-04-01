@@ -1,0 +1,56 @@
+<?php
+/**
+ * PHP array class that accepts *any* value as the key
+ * (null, false, true, float, arrays, objects, resources)
+ *
+ * Example:
+ * $map = new Map();
+ * $map[null] = 1;
+ * $map[false] = 2;
+ * $map[1.5] = 3;
+ * $arr = array(1, 2, 3);
+ * $map[$arr] = 4;
+ * $im = imagecreate(10,10); // requires GD
+ * $map[$im] = 5;
+ * echo $map[null].$map[false].$map[1.5].$map[$arr].$map[$im]; // "1234"
+ */
+class Map implements ArrayAccess {
+	private $map = array();
+
+	public function __construct() {
+		$this->map = array();
+	}
+
+	private function os($offset) {
+		if (is_object($offset)) {
+			return spl_object_hash($offset);
+		} else {
+			return serialize($offset);
+		}
+	}
+
+	public function offsetSet($offset, $value) {
+		$offset = $this->os($offset);
+		if (is_null($offset)) {
+			$this->map[] = $value;
+		} else {
+			$this->map[$offset] = $value;
+		}
+	}
+
+	public function offsetExists($offset) {
+		$offset = $this->os($offset);
+		return isset($this->map[$offset]);
+	}
+
+	public function offsetUnset($offset) {
+		$offset = $this->os($offset);
+		unset($this->map[$offset]);
+	}
+
+	public function offsetGet($offset) {
+		$offset = $this->os($offset);
+		return isset($this->map[$offset]) ? $this->map[$offset] : null;
+	}
+	
+}
