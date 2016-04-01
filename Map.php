@@ -22,11 +22,25 @@ class Map implements ArrayAccess {
 	}
 
 	private function os($offset) {
-		if (is_object($offset)) {
-			return spl_object_hash($offset);
+		
+		if (is_resource($offset)) {
+			$t = array(
+				"type" => "resource",
+				"value" => get_resource_type($offset) . " - " . ((string) $offset)
+			);			
+		} else if (is_object($offset)) {
+			$t = array(
+				"type" => "object",
+				"value" => spl_object_hash($offset)
+			);
 		} else {
-			return serialize($offset);
+			$t = array(
+				"type" => "basic",
+				"value" => $offset
+			);
 		}
+		
+		return serialize($t);
 	}
 
 	public function offsetSet($offset, $value) {
